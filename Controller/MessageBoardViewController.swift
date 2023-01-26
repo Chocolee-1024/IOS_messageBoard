@@ -12,7 +12,7 @@ class MessageBoardViewController: UIViewController {
     
     var messageArray: [Message] = []
     var optionsArray: [String] = ["預設","舊到新","新到舊"]
-    let messageTableDAO = MessageTableDAO.SharedInstance()
+    let localDatabase = LocalDatabase.SharedInstance()
     enum SortRule{
         case oldToNew
         case newToOld
@@ -103,7 +103,7 @@ class MessageBoardViewController: UIViewController {
     //撈資料
     func fetchMessage(){
         DispatchQueue.global().async {
-            self.messageArray = self.messageTableDAO.fetchFromDatabase()
+            self.messageArray = self.localDatabase.fetchFromDatabase()
         }
         DispatchQueue.main.async {
             self.messageTableView.reloadData()
@@ -125,7 +125,7 @@ class MessageBoardViewController: UIViewController {
             }
             return
         }
-        messageTableDAO.UpdataMessage(message: message, messagePeople: messagePeople, messageContext: messageContext)
+        localDatabase.UpdataMessage(message: message, messagePeople: messagePeople, messageContext: messageContext)
         
         showAlert(title: "成功", message: "更新留言成功!!", confirmTitle: "關閉"){
             self.messagePeopleTextField.text = ""
@@ -156,13 +156,13 @@ class MessageBoardViewController: UIViewController {
         let message = Message(name: messagePeople,
                           context: messageContext,
                           timestamp: Int64(Date().timeIntervalSince1970))
-        messageTableDAO.addMessage(message: message)
+        localDatabase.addMessage(message: message)
         fetchMessage()
     }
     //排序按鈕事件
     @IBAction func sortButtonClick(_ sender: UIButton){
         showAlertSheet(title: "請選擇排序方法",message: "chocolee", options: optionsArray){ index in
-            self.messageTableDAO.SortMessage(index: index)
+            self.localDatabase.SortMessage(index: index)
             self.fetchMessage()
         }
     }
@@ -190,7 +190,7 @@ extension MessageBoardViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "刪除") { action, sourceView, completionHandler in
             let deleteMessage =  self.messageArray[indexPath.row]
-            self.messageTableDAO.deleteMessage(message: deleteMessage)
+            self.localDatabase.deleteMessage(message: deleteMessage)
             self.fetchMessage()
             completionHandler(true)
         }
