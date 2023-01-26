@@ -16,7 +16,6 @@
 		8D0FA33C2976E7E5006FD2F2 /* MessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0FA33A2976E7E5006FD2F2 /* MessageTableViewCell.swift */; };
 		8D0FA33D2976E7E5006FD2F2 /* MessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D0FA33B2976E7E5006FD2F2 /* MessageTableViewCell.xib */; };
 		8D0FA3432977974B006FD2F2 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0FA3422977974B006FD2F2 /* Message.swift */; };
-		8D8BF99329826F5D009F5CAD /* MessageTableDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8BF99229826F5D009F5CAD /* MessageTableDAO.swift */; };
 		8DFCC190297B9EE600F6395E /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 8DFCC18F297B9EE600F6395E /* Realm */; };
 		8DFCC192297B9EE600F6395E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8DFCC191297B9EE600F6395E /* RealmSwift */; };
 		8DFCC194297BCFE000F6395E /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFCC193297BCFE000F6395E /* LocalDatabase.swift */; };
@@ -34,7 +33,6 @@
 		8D0FA33A2976E7E5006FD2F2 /* MessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableViewCell.swift; sourceTree = "<group>"; };
 		8D0FA33B2976E7E5006FD2F2 /* MessageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageTableViewCell.xib; sourceTree = "<group>"; };
 		8D0FA3422977974B006FD2F2 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		8D8BF99229826F5D009F5CAD /* MessageTableDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableDAO.swift; sourceTree = "<group>"; };
 		8DFCC193297BCFE000F6395E /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,7 +84,6 @@
 			children = (
 				8D0FA3422977974B006FD2F2 /* Message.swift */,
 				8DFCC193297BCFE000F6395E /* LocalDatabase.swift */,
-				8D8BF99229826F5D009F5CAD /* MessageTableDAO.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -190,7 +187,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DFCC194297BCFE000F6395E /* LocalDatabase.swift in Sources */,
-				8D8BF99329826F5D009F5CAD /* MessageTableDAO.swift in Sources */,
 				8D0FA31D2976AAE2006FD2F2 /* AppDelegate.swift in Sources */,
 				8D0FA33C2976E7E5006FD2F2 /* MessageTableViewCell.swift in Sources */,
 				8D0FA3432977974B006FD2F2 /* Message.swift in Sources */,
