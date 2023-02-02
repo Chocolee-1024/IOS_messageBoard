@@ -8,12 +8,25 @@
 import UIKit
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let options: UNAuthorizationOptions = [.alert, .badge]
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { isAllow, error in
+            guard error == nil else{
+                print("接收通知，Error：\(String(describing: error?.localizedDescription))")
+                return
+            }
+            if isAllow{
+                print("使用者同意接收通知")
+            } else{
+                print("使用者不同意接收通知")
+            }
+        }
+        UNUserNotificationCenter.current().delegate = self
         return true
     }
 
@@ -30,7 +43,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.badge, .sound, .alert])
+    }
 
 }
 

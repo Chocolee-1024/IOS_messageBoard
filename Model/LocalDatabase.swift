@@ -8,15 +8,16 @@
 import Foundation
 import RealmSwift
 class LocalDatabase: NSObject{
-    private static var share: LocalDatabase?
-    
-    //Singleton模式
-    static func SharedInstance() -> LocalDatabase{
-        if share == nil{
-            share = LocalDatabase()
-        }
-        return share!
-    }
+//    private static var share: LocalDatabase?
+//    
+//    //Singleton模式
+//    static func SharedInstance() -> LocalDatabase{
+//        if share == nil{
+//            share = LocalDatabase()
+//        }
+//        return share!
+//    }
+    static let share = LocalDatabase()
     /**
      原本寫法是放在if裡，所以當我刪掉資料變0時不會進刷新資料。
      刷新資料拿出來後就會從整，但Array裡你刪掉的最後一筆還會在因為部會進if裡，所以不會把Array清空，應此要把Array清空拿出來。

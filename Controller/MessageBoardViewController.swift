@@ -12,7 +12,8 @@ class MessageBoardViewController: UIViewController {
     
     var messageArray: [Message] = []
     var optionsArray: [String] = ["預設","舊到新","新到舊"]
-    let localDatabase = LocalDatabase.SharedInstance()
+//    let localDatabase = LocalDatabase.SharedInstance()
+    let localDatabase = LocalDatabase.share
     enum SortRule{
         case oldToNew
         case newToOld
@@ -30,6 +31,8 @@ class MessageBoardViewController: UIViewController {
     //設定UI樣式
     private func setupUI(){
         setupTableView()
+        setupNagivationBarButtonItems()
+        setupNagivationBarButtonItemsStyle()
         setupLabel()
         setupButton()
         let tap = UITapGestureRecognizer(target: self, action: #selector(closeKeyBoard))
@@ -58,6 +61,21 @@ class MessageBoardViewController: UIViewController {
         sendButton.layer.cornerRadius = 15
         sortButton.layer.cornerRadius = 15
 
+    }
+    //設定 UINagivationBar樣式
+    private func setupNagivationBarButtonItemsStyle(){
+        let appearance = UINavigationBarAppearance()
+        self.navigationController?.navigationBar.standardAppearance = appearance
+        
+    }
+    //設定NagivationBarButtonItems樣式
+    private func setupNagivationBarButtonItems(){
+        let sortItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.circle.fill"), style: .done, target: self, action: #selector(sortItemClick))
+        navigationItem.leftBarButtonItem = sortItem
+        
+        let addItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .done, target: self, action: #selector(addItemClick))
+        navigationItem.rightBarButtonItem = addItem
+        
     }
     //設定送出成功提示欄
     func showAlert(title: String?, message: String?, confirmTitle: String?, confirm: (() -> Void)? = nil){
@@ -95,11 +113,54 @@ class MessageBoardViewController: UIViewController {
             }
         })
     }
+    private func callNotification(title: String, body: String, subtitle: String){
+        let content = UNMutableNotificationContent()
+        content.title = "\(title)"
+        content.body = "\(body)"
+        content.subtitle = "\(subtitle)"
+        content.badge = 1
+        let request = UNNotificationRequest(identifier: "notification", content: content, trigger: nil)
+        
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: {error in
+            print("成功建立通知...")
+        })    }
     //關閉鍵盤
     @objc func closeKeyBoard(){
         view.endEditing(true)
     }
-
+    //排序
+    @objc func sortItemClick(){
+        showAlertSheet(title: "請選擇排序方法",message: "chocolee", options: optionsArray){ index in
+            self.localDatabase.SortMessage(index: index)
+            self.fetchMessage()
+        }
+    }
+    //新增
+    @objc func addItemClick(){
+        closeKeyBoard()
+        guard let messagePeople = messagePeopleTextField.text, !(messagePeople.isEmpty)else{
+            showAlert(title: "錯誤", message: "請輸入留言人", confirmTitle: "關閉"){
+                self.messageTextView.text = ""
+            }
+            return
+        }
+        guard let messageContext = messageTextView.text, !(messageContext.isEmpty)else{
+            showAlert(title: "錯誤", message: "請輸入留言內容", confirmTitle: "關閉"){
+                self.messagePeopleTextField.text = ""
+            }
+            return
+        }
+        showAlert(title: "成功", message: "留言已送出!!", confirmTitle: "關閉"){
+            self.messagePeopleTextField.text = ""
+            self.messageTextView.text = ""
+        }
+        let message = Message(name: messagePeople,
+                          context: messageContext,
+                          timestamp: Int64(Date().timeIntervalSince1970))
+        localDatabase.addMessage(message: message)
+        callNotification(title: "新增留言", body: messageContext, subtitle: messagePeople)
+        fetchMessage()
+    }
     //撈資料
     func fetchMessage(){
         DispatchQueue.global().async {
@@ -126,6 +187,7 @@ class MessageBoardViewController: UIViewController {
             return
         }
         localDatabase.UpdataMessage(message: message, messagePeople: messagePeople, messageContext: messageContext)
+        callNotification(title: "更新留言", body: messageContext, subtitle: messagePeople)
         
         showAlert(title: "成功", message: "更新留言成功!!", confirmTitle: "關閉"){
             self.messagePeopleTextField.text = ""
@@ -157,6 +219,7 @@ class MessageBoardViewController: UIViewController {
                           context: messageContext,
                           timestamp: Int64(Date().timeIntervalSince1970))
         localDatabase.addMessage(message: message)
+        callNotification(title: "新增留言", body: messageContext, subtitle: messagePeople)
         fetchMessage()
     }
     //排序按鈕事件
@@ -184,7 +247,7 @@ extension MessageBoardViewController: UITableViewDataSource, UITableViewDelegate
     }
     //Cell高度
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 100
     }
     //左滑刪除
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -192,6 +255,7 @@ extension MessageBoardViewController: UITableViewDataSource, UITableViewDelegate
             let deleteMessage =  self.messageArray[indexPath.row]
             self.localDatabase.deleteMessage(message: deleteMessage)
             self.fetchMessage()
+            self.callNotification(title: "刪除留言", body: deleteMessage.context, subtitle: deleteMessage.name)
             completionHandler(true)
         }
         deleteAction.image = UIImage(systemName: "trash")
